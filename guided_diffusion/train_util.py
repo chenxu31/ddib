@@ -168,6 +168,16 @@ class TrainLoop:
         if (self.step - 1) % self.save_interval != 0:
             self.save()
 
+    def run_loop_pelvic(self, num_epochs):
+        for cur_epoch in range(num_epochs):
+            for data in self.data:
+                batch = data["image"]
+
+                self.run_step(batch, {})
+
+            logger.dumpkvs()
+            self.save()
+
     def run_step(self, batch, cond):
         self.forward_backward(batch, cond)
         took_step = self.mp_trainer.optimize(self.opt)

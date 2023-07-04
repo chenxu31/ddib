@@ -5,6 +5,15 @@ import numpy as np
 from sklearn.datasets import make_moons
 from torch.utils.data import DataLoader, Dataset
 
+import platform
+
+if platform.system() == 'Windows':
+    sys.path.append(r"E:\我的坚果云\sourcecode\python\util")
+else:
+    sys.path.append("/home/chenxu/我的坚果云/sourcecode/python/util")
+
+import common_pelvic_pt as common_pelvic
+
 
 def heatmap(points, filename='heatmap.png'):
     """
@@ -236,6 +245,17 @@ class Synthetic2DDataset(Dataset):
 def load_2d_data(batch_size, shape: Synthetic2DType, training=True, n_samples=300000):
     dataset = Synthetic2DDataset(n_samples=n_samples, shape=shape)
     loader = DataLoader(dataset, batch_size=batch_size, num_workers=1, drop_last=False)
+    if training:
+        while True:
+            yield from loader
+    else:
+        yield from loader
+
+
+def load_pelvic_data(data_dir, batch_size, modality, training=True):
+    dataset = common_pelvic.Dataset(data_dir, modality=modality, n_slices=1)
+    loader = DataLoader(dataset, batch_size=batch_size, num_workers=1, drop_last=False)
+
     if training:
         while True:
             yield from loader
